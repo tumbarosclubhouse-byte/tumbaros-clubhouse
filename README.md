@@ -1,2 +1,2 @@
 # tumbaros-clubhouse
-dog daycare and boarding management app
+dog daycare and boarding management app 
