@@ -49,9 +49,9 @@ function saveCache(dogs: any[], visits: any[]) {
 const HISTORICAL_DATA = [
   {
     month: "2024-07",
-    boardingRevenue: 6550,
+    boardingRevenue: 6600,
     daycareRevenue: 0,
-    totalRevenue: 6550,
+    totalRevenue: 6600,
     boardingNights: 274,
     daycareVisits: 0,
     meetGreets: 0,
@@ -305,7 +305,7 @@ export default function TumbarosManagement() {
   const [dogs, setDogs] = useState([]);
   const [visits, setVisits] = useState([]);
   const historicalMonthly: Record<string, number> = {
-    "2024-07": 6550,
+    "2024-07": 6600,
     "2024-08": 33900,
     "2024-09": 3450,
     "2024-10": 5550,
@@ -3541,7 +3541,7 @@ function Analytics({ visits }: { visits: any[] }) {
   const [view, setView] = useState<"monthly" | "yearly">("monthly");
   // ===== 1. HARD-LOCKED HISTORICAL DATA =====
   const historicalMonthly: Record<string, number> = {
-    "2024-07": 6550,
+    "2024-07": 6600,
     "2024-08": 33900,
     "2024-09": 3450,
     "2024-10": 5550,
