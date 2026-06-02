@@ -1502,9 +1502,13 @@ export default function TumbarosManagement() {
       <header className="bg-stone-800 text-stone-50 border-b border-stone-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-              <PawPrint className="w-8 h-8 text-emerald-800" />
-            </div>
+            <div className="w-12 h-12 rounded-full overflow-hidden">
+<img
+src="/IMG_5627.jpeg"
+alt="Tumbaros Clubhouse"
+className="w-full h-full object-cover"
+/>
+</div>
             <div>
               <h1 className="text-2xl font-light tracking-wide">
                 Tumbaros Clubhouse
