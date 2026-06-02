@@ -1506,7 +1506,7 @@ export default function TumbarosManagement() {
 <img
 src="/src/IMG_5627.jpeg"
 alt="Tumbaros Clubhouse"
-className="w-full h-full object-cover"
+className="w-full h-full object-contain p-1"
 />
 </div>
             <div>
