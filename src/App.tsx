@@ -1810,12 +1810,6 @@ function Dashboard({ dogs, visits }) {
         <Metric label="Today" value={`$${todayRev.toFixed(0)}`} />
         <Metric label="This Month" value={`$${monthRev.toFixed(0)}`} />
         <Metric label="All Time" value={`$${(allRev / 1000).toFixed(1)}k`} />
-        <Metric
-          label="Avg Monthly"
-          value={`$${avg.toFixed(0)}`}
-          trend={growth > 0 ? "up" : "down"}
-          trendVal={`${Math.abs(growth).toFixed(1)}%`}
-        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
