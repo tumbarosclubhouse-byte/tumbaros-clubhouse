@@ -1504,7 +1504,7 @@ export default function TumbarosManagement() {
           <div className="flex items-center space-x-4">
           <div className="w-12 h-12 rounded-full overflow-hidden bg-white flex items-center justify-center">
 <img
-src="/src/IMG_5627.jpeg"
+src="/IMG_5627.jpeg"
 alt="Tumbaros Clubhouse"
 className="w-full h-full object-contain p-1"
 />
