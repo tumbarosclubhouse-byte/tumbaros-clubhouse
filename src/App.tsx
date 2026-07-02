@@ -1628,6 +1628,19 @@ function Dashboard({ dogs, visits }) {
     `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
   const today = localYMD();
+  const fmtTime = (t: any) => {
+  if (!t) return "";
+  const [hhStr, mmStr] = String(t).split(":");
+  const hh = Number(hhStr);
+  const mm = Number(mmStr);
+
+  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return "";
+
+  const ampm = hh >= 12 ? "PM" : "AM";
+  const hour12 = ((hh + 11) % 12) + 1;
+
+  return `${hour12}:${String(mm).padStart(2, "0")} ${ampm}`;
+};
   const monthStart = `${new Date().getFullYear()}-${pad2(
     new Date().getMonth() + 1
   )}-01`;
@@ -1789,46 +1802,11 @@ function Dashboard({ dogs, visits }) {
   const allRev =
     HISTORICAL_DATA.reduce((s, m) => s + m.totalRevenue, 0) +
     visits.reduce((s, v) => s + (v.amount || 0), 0);
-  const monthsWithData = new Set(
-    visits
-      .filter((v) => v.date)
-      .map((v) => {
-        const d = new Date(v.date);
-        return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 7);
-      })
-      .filter(Boolean)
-  );
 
-  const now = new Date();
-  const currentMonthKey = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}`;
-
-  const monthlyTotals: Record<string, number> = {};
-
-  (visits ?? []).forEach((v: any) => {
-    const month = (v.checkIn ?? v.date ?? v.created_at ?? "").slice(0, 7);
-    if (!month) return;
-    if (month > currentMonthKey) return; // ignore future months
-    monthlyTotals[month] =
-      (monthlyTotals[month] || 0) + Number(v.price ?? v.amount ?? 0);
-  });
-
-  const validMonths = Object.keys(monthlyTotals).filter(
-    (m) => (monthlyTotals[m] || 0) > 0
-  );
-
-  const avg =
-    validMonths.length > 0
-      ? validMonths.reduce((sum, m) => sum + monthlyTotals[m], 0) /
-        validMonths.length
-      : 0;
-
-  const growth = 0;
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Metric label="Today" value={`$${todayRev.toFixed(0)}`} />
         <Metric label="This Month" value={`$${monthRev.toFixed(0)}`} />
         <Metric label="All Time" value={`$${(allRev / 1000).toFixed(1)}k`} />
@@ -1860,7 +1838,52 @@ function Dashboard({ dogs, visits }) {
           </div>
         ))}
       </div>
+<div className="bg-white border border-stone-200 rounded-lg p-6">
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="font-light text-lg">Today's Visits</h3>
+    <span className="text-sm text-emerald-700 font-medium">
+      ${todayRev.toFixed(0)}
+    </span>
+  </div>
 
+  {todayV.length === 0 ? (
+    <p className="text-center text-stone-400 py-8 text-sm">
+      No visits scheduled for today.
+    </p>
+  ) : (
+    <div className="space-y-2">
+      {todayV.map((v: any) => {
+        const dogName = v.dog_name || "Unknown";
+        const service = v.service_type ?? v.service ?? "visit";
+        const amount = perDayRevenue(v);
+
+        return (
+          <div
+            key={v.id}
+            className="flex justify-between items-start gap-4 py-3 border-b border-stone-100 last:border-0"
+          >
+            <div>
+              <p className="text-sm font-medium text-stone-900">{dogName}</p>
+              <p className="text-xs text-stone-500">
+                {service} • Drop-off: {fmtTime(v.dropoff_time) || "—"} •
+                Pick-up: {fmtTime(v.pickup_time) || "—"}
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-sm font-medium text-emerald-700">
+                ${amount.toFixed(0)}
+              </p>
+              {isBoarding(v) && (
+                <p className="text-xs text-stone-500">sleepover</p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+</div>
       <div className="bg-white border border-stone-200 rounded-lg p-6">
         <h3 className="font-light text-lg mb-4">Recent Activity</h3>
         <div className="space-y-2">
