@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "./supabaseClient";
 import Select from "react-select";
+import logo from "../IMG_5627.jpeg";
 
 const withTimeout = async <T,>(promise: Promise<T>, ms = 60000): Promise<T> => {
   return await Promise.race([
@@ -1504,7 +1505,7 @@ export default function TumbarosManagement() {
           <div className="flex items-center space-x-4">
           <div className="w-12 h-12 rounded-full overflow-hidden bg-white flex items-center justify-center">
 <img
-src="/IMG_5627.jpeg"
+src={logo}
 alt="Tumbaros Clubhouse"
 className="w-full h-full object-contain p-1"
 />
