@@ -1236,7 +1236,7 @@ export default function TumbarosManagement() {
           .select(
             "id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price"
           )
-          .order("start_date", { ascending: true });
+          .order("start_date", { ascending: false });
 
         if (visitErr) {
           console.error("VISITS LOAD ERROR:", visitErr);
