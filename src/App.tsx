@@ -1229,26 +1229,55 @@ export default function TumbarosManagement() {
         // If visits are stored elsewhere, leave this empty for now:
 
         // Load booking requests
-        // Load visits from public.visits
-        // Get only the next 30 days of visits (fast + practical)
-        const { data: visitRows, error: visitErr } = await supabase
-          .from("visits")
-          .select(
-            "id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price"
-          )
-          .order("start_date", { ascending: false });
+        // Load ALL visits from Supabase in batches.
+// Supabase normally limits a single response to around 1,000 rows.
+const loadAllVisits = async () => {
+const PAGE_SIZE = 1000;
+let from = 0;
+let allVisits: any[] = [];
 
-        if (visitErr) {
-          console.error("VISITS LOAD ERROR:", visitErr);
-        } else {
-          //  console.log("Loaded visits from public.visits:", visitRows);
-          //  console.log("ONE VISIT SAMPLE:", visitRows?.[0]);
-          const normalizedVisits = visitRows || [];
+while (true) {
+const { data, error } = await supabase
+.from("visits")
+.select(
+"id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price"
+)
+.order("start_date", { ascending: false })
+.range(from, from + PAGE_SIZE - 1);
 
-          setVisits(normalizedVisits);
-          saveCache({ dogs: dogsRef.current, visits: normalizedVisits });
-          console.log("SETTING VISITS:", normalizedVisits.length);
-        }
+if (error) {
+throw error;
+}
+
+const batch = data ?? [];
+
+allVisits = [...allVisits, ...batch];
+
+// Less than PAGE_SIZE means we reached the end.
+if (batch.length < PAGE_SIZE) {
+break;
+}
+
+from += PAGE_SIZE;
+}
+
+return allVisits;
+};
+
+try {
+const visitRows = await loadAllVisits();
+
+setVisits(visitRows);
+
+saveCache({
+dogs: dogsRef.current,
+visits: visitRows,
+});
+
+console.log("SETTING ALL VISITS:", visitRows.length);
+} catch (visitErr) {
+console.error("VISITS LOAD ERROR:", visitErr);
+}
         const { data: reqRows, error: reqErr } = await supabase
           .from("booking_requests")
           .select(
