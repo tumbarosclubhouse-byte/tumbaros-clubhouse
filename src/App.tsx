@@ -1282,6 +1282,10 @@ subscription.unsubscribe();
   const didInitRef = useRef(false);
 
   useEffect(() => {
+    if (isPublic) return;
+if (authLoading) return;
+if (!currentUser) return;
+if (userRole !== "owner") return;
     (async () => {
       setLoading(true);
       // ✅ Step 2: hydrate UI from local cache FIRST (so dashboard isn't blank if Supabase is down)
@@ -1458,7 +1462,7 @@ console.error("VISITS LOAD ERROR:", visitErr);
         setTimeout(() => setLoading(false), 1000);
       }
     })();
-  }, []);
+}, [isPublic, authLoading, currentUser?.id, userRole]);
 
   useEffect(() => {
     if (!hydrated) return;
