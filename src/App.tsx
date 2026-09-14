@@ -18,7 +18,102 @@ import {
 import { supabase } from "./supabaseClient";
 import Select from "react-select";
 import logo from "../IMG_5627.jpeg";
+function LoginScreen() {
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [loginError, setLoginError] = useState("");
+const [loggingIn, setLoggingIn] = useState(false);
 
+const handleLogin = async () => {
+if (!email || !password) {
+setLoginError("Please enter your email and password.");
+return;
+}
+
+setLoggingIn(true);
+setLoginError("");
+
+const { error } = await supabase.auth.signInWithPassword({
+email: email.trim(),
+password,
+});
+
+if (error) {
+setLoginError("Incorrect email or password.");
+}
+
+setLoggingIn(false);
+};
+
+return (
+<div className="min-h-screen bg-stone-100 flex items-center justify-center px-4">
+<div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
+<div className="flex justify-center mb-5">
+<div className="w-24 h-24 rounded-full overflow-hidden bg-white flex items-center justify-center border border-stone-200">
+<img
+src={logo}
+alt="Tumbaros Clubhouse"
+className="w-full h-full object-contain p-2"
+/>
+</div>
+</div>
+
+<h1 className="text-2xl text-center font-medium text-stone-900">
+Tumbaros Clubhouse
+</h1>
+
+<p className="text-center text-stone-500 text-sm mt-1 mb-7">
+Staff Login
+</p>
+
+<div className="space-y-4">
+<div>
+<label className="block text-sm font-medium text-stone-700 mb-1">
+Email
+</label>
+<input
+type="email"
+value={email}
+onChange={(e) => setEmail(e.target.value)}
+className="w-full border border-stone-300 rounded-lg px-3 py-3 outline-none focus:ring-2 focus:ring-emerald-700"
+placeholder="Email address"
+/>
+</div>
+
+<div>
+<label className="block text-sm font-medium text-stone-700 mb-1">
+Password
+</label>
+<input
+type="password"
+value={password}
+onChange={(e) => setPassword(e.target.value)}
+onKeyDown={(e) => {
+if (e.key === "Enter") handleLogin();
+}}
+className="w-full border border-stone-300 rounded-lg px-3 py-3 outline-none focus:ring-2 focus:ring-emerald-700"
+placeholder="Password"
+/>
+</div>
+
+{loginError && (
+<div className="text-sm text-red-600 text-center">
+{loginError}
+</div>
+)}
+
+<button
+onClick={handleLogin}
+disabled={loggingIn}
+className="w-full bg-emerald-800 text-white rounded-lg py-3 font-medium disabled:opacity-50"
+>
+{loggingIn ? "Signing in..." : "Sign In"}
+</button>
+</div>
+</div>
+</div>
+);
+}
 const withTimeout = async <T,>(promise: Promise<T>, ms = 60000): Promise<T> => {
   return await Promise.race([
     promise,
@@ -329,6 +424,60 @@ export default function TumbarosManagement() {
   const [bookingRequests, setBookingRequests] = useState<any[]>([]);
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const isPublic = new URLSearchParams(window.location.search).has("public");
+  const [authLoading, setAuthLoading] = useState(true);
+const [currentUser, setCurrentUser] = useState<any>(null);
+const [userRole, setUserRole] = useState<string | null>(null);
+const [displayName, setDisplayName] = useState("");
+
+const loadUserAccess = async (user: any) => {
+if (!user) {
+setCurrentUser(null);
+setUserRole(null);
+setDisplayName("");
+setAuthLoading(false);
+return;
+}
+
+setCurrentUser(user);
+
+const { data, error } = await supabase
+.from("user_roles")
+.select("role, display_name")
+.eq("id", user.id)
+.single();
+
+if (error) {
+console.error("ROLE LOAD ERROR:", error);
+setUserRole(null);
+setDisplayName("");
+} else {
+setUserRole(data?.role ?? null);
+setDisplayName(data?.display_name ?? "");
+}
+
+setAuthLoading(false);
+};
+
+useEffect(() => {
+if (isPublic) {
+setAuthLoading(false);
+return;
+}
+
+supabase.auth.getSession().then(({ data }) => {
+loadUserAccess(data.session?.user ?? null);
+});
+
+const {
+data: { subscription },
+} = supabase.auth.onAuthStateChange((_event, session) => {
+loadUserAccess(session?.user ?? null);
+});
+
+return () => {
+subscription.unsubscribe();
+};
+}, [isPublic]);
   // Public booking form state
   const [serviceType, setServiceType] = useState("");
   const [parentName, setParentName] = useState("");
@@ -1356,6 +1505,67 @@ console.error("VISITS LOAD ERROR:", visitErr);
 
     void save();
   }, [dogs, visits, hydrated]);
+  if (authLoading) {
+return (
+<div className="min-h-screen bg-stone-100 flex items-center justify-center">
+<div className="text-stone-600 text-sm">Loading...</div>
+</div>
+);
+}
+
+if (!isPublic && !currentUser) {
+return <LoginScreen />;
+}
+
+if (!isPublic && currentUser && !userRole) {
+return (
+<div className="min-h-screen bg-stone-100 flex items-center justify-center px-4">
+<div className="bg-white rounded-xl shadow p-6 max-w-sm w-full text-center">
+<h2 className="text-xl font-semibold text-stone-900 mb-2">
+Access not set up
+</h2>
+
+<p className="text-sm text-stone-600">
+Your account does not have an assigned Tumbaros role yet.
+</p>
+
+<button
+onClick={() => supabase.auth.signOut()}
+className="mt-5 bg-stone-800 text-white px-4 py-2 rounded-lg"
+>
+Sign Out
+</button>
+</div>
+</div>
+);
+}
+
+if (!isPublic && userRole === "employee") {
+return (
+<div className="min-h-screen bg-stone-100 flex items-center justify-center px-4">
+<div className="bg-white rounded-xl shadow p-6 max-w-sm w-full text-center">
+<h1 className="text-2xl font-semibold text-stone-900">
+Tumbaros Staff
+</h1>
+
+<p className="text-stone-500 mt-2">
+Welcome{displayName ? `, ${displayName}` : ""}.
+</p>
+
+<p className="text-sm text-stone-600 mt-5">
+Employee dashboard is being set up.
+</p>
+
+<button
+onClick={() => supabase.auth.signOut()}
+className="mt-6 bg-stone-800 text-white px-4 py-2 rounded-lg"
+>
+Sign Out
+</button>
+</div>
+</div>
+);
+}
   if (isPublic) {
     return (
       <div className="min-h-screen bg-stone-50 p-6">
