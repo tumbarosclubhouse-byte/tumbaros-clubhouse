@@ -1711,18 +1711,16 @@ employeeView === "schedule"
 : employeeView === "members"
 ? "members"
 : "today";
+  if (employeePage === "schedule") {
 return (
 <div className="min-h-screen bg-stone-100 pb-24">
-  {employeePage === "schedule" ? (
-<div className="max-w-xl mx-auto p-4 pb-24">
-<div className="mb-4">
-<h1 className="text-2xl font-semibold text-stone-900">
+<div className="max-w-xl mx-auto p-4">
+<h1 className="text-2xl font-semibold text-stone-900 mb-1">
 Schedule
 </h1>
-<p className="text-sm text-stone-500 mt-1">
-All upcoming and current stays
+<p className="text-sm text-stone-500 mb-5">
+Clubhouse schedule
 </p>
-</div>
 
 <Visits
 visits={visits}
@@ -1732,17 +1730,37 @@ selectedVisit={selectedVisit}
 setSelectedVisit={setSelectedVisit}
 />
 </div>
-) : employeePage === "members" ? (
-<div className="max-w-xl mx-auto p-4 pb-24">
-<h1 className="text-2xl font-semibold text-stone-900">
+
+<div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50">
+<div className="max-w-xl mx-auto grid grid-cols-3">
+<button
+onClick={() => setEmployeePage("today")}
+className="py-4 text-stone-500 text-sm"
+>
+Today
+</button>
+
+<button
+onClick={() => setEmployeePage("schedule")}
+className="py-4 text-emerald-800 font-semibold text-sm"
+>
+Schedule
+</button>
+
+<button
+onClick={() => setEmployeePage("members")}
+className="py-4 text-stone-500 text-sm"
+>
 Members
-</h1>
-<p className="text-sm text-stone-500 mt-1">
-Clubhouse pup profiles
-</p>
+</button>
 </div>
-) : (
-<>
+</div>
+</div>
+);
+}
+return (
+<div className="min-h-screen bg-stone-100 pb-24">
+ 
 <div className="max-w-xl mx-auto">
 <div className="bg-emerald-900 text-white px-5 pt-7 pb-6">
 <div className="flex items-start justify-between">
@@ -1853,8 +1871,7 @@ No pickups today.
 )}
 </div>
 </div>
-</>
-)}
+
 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200">
 <div className="max-w-xl mx-auto grid grid-cols-3">
 <button
