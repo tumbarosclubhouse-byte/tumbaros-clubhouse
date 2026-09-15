@@ -1647,11 +1647,14 @@ null
 const dogPhoto = (v: any) => {
 const dog = dogForVisit(v);
 
-return (
-dog?.photo ??
-dog?.data?.photo ??
-null
-);
+console.log("PHOTO DEBUG:", {
+visitDog: v.dog_name,
+visitDogId: v.dog_id,
+matchedDog: dog,
+photo: dog?.photo ?? dog?.data?.photo ?? null,
+});
+
+return dog?.photo ?? dog?.data?.photo ?? null;
 };
 const dogName = (v: any) => {
 const dog = dogs.find(
