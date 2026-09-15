@@ -1603,12 +1603,15 @@ const arrivingToday = todaysVisits.filter(
 (v: any) => getStart(v) === today
 );
 
-// Boarding pickups ending today
-const leavingToday = todaysVisits.filter(
-(v: any) =>
-isBoardingVisit(v) &&
-getEnd(v) === today
-);
+// Boarding pickups + daycare dogs leaving today
+const leavingToday = todaysVisits.filter((v: any) => {
+if (isBoardingVisit(v)) {
+return getEnd(v) === today;
+}
+
+// Daycare / meet & greet start and finish the same day
+return getStart(v) === today;
+});
 
 // Boarding dogs who were already here before today
 // and are not leaving until after today
