@@ -1706,7 +1706,52 @@ Due
 </div>
 );
 const employeePage = employeeView;
+if (employeePage === "members") {
+return (
+<div className="min-h-screen bg-stone-100 pb-24">
+<div className="max-w-xl mx-auto p-4">
+<h1 className="text-2xl font-semibold text-stone-900 mb-1">
+Members
+</h1>
 
+<p className="text-sm text-stone-500 mb-5">
+Clubhouse pup profiles
+</p>
+
+<Dogs
+dogs={dogs}
+setDogs={setDogs}
+visits={visits}
+/>
+</div>
+
+<div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50">
+<div className="max-w-xl mx-auto grid grid-cols-3">
+<button
+onClick={() => setEmployeeView("today")}
+className="py-4 text-stone-500 text-sm"
+>
+Today
+</button>
+
+<button
+onClick={() => setEmployeeView("schedule")}
+className="py-4 text-stone-500 text-sm"
+>
+Schedule
+</button>
+
+<button
+onClick={() => setEmployeeView("members")}
+className="py-4 text-emerald-800 font-semibold text-sm"
+>
+Members
+</button>
+</div>
+</div>
+</div>
+);
+}
   if (employeePage === "schedule") {
 return (
 <div className="min-h-screen bg-stone-100 pb-24">
