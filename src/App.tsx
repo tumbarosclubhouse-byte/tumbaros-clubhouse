@@ -3720,18 +3720,31 @@ dogId: selectedVisit.dog_id ?? selectedVisit.dogId ?? dogs.find((d: any) => (d.d
                   const confirmDelete = window.confirm("Delete this visit?");
                   if (!confirmDelete) return;
 
-                  const { error } = await supabase
-                    .from("visits")
-                    .delete()
-                    .eq("id", selectedVisit.id);
+                 const { data: deletedRows, error } = await supabase
+.from("visits")
+.delete()
+.eq("id", selectedVisit.id)
+.select("id");
 
-                  if (error) {
-                    alert("Delete failed");
-                    return;
-                  }
+if (error) {
+console.error("VISIT DELETE ERROR:", error);
+alert("Delete failed - check console.");
+return;
+}
 
-                  setVisits(visits.filter((v) => v.id !== selectedVisit.id));
-                  setSelectedVisit(null);
+console.log("DELETED ROWS:", deletedRows);
+
+if (!deletedRows || deletedRows.length === 0) {
+console.error("Supabase deleted 0 rows. Check DELETE RLS policy.");
+alert("The stay was not deleted from the database.");
+return;
+}
+
+setVisits((prev) =>
+prev.filter((v: any) => String(v.id) !== String(selectedVisit.id))
+);
+
+setSelectedVisit(null);
                 }}
               >
                 Delete
