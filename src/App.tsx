@@ -3454,7 +3454,7 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
                   setIsEditingVisit(true);
                   setEditVisitDraft({
                     ...selectedVisit,
-                    dogId: selectedVisit.dog_id ?? selectedVisit.dogId ?? "",
+dogId: selectedVisit.dog_id ?? selectedVisit.dogId ?? dogs.find((d: any) => (d.dog_name ?? d.name ?? d.data?.name) === (selectedVisit.dog_name ?? selectedVisit.name))?.id ?? "",
                     serviceType:
                       selectedVisit.service_type ?? selectedVisit.service ?? "",
                     // make sure these exist in the draft even if missing on the row
