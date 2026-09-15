@@ -1545,50 +1545,257 @@ Sign Out
 }
 
 if (!isPublic && userRole === "employee") {
+const today = new Date().toISOString().slice(0, 10);
+
+const todaysVisits = visits.filter((v: any) => {
+const start = String(
+v.start_date ?? v.checkIn ?? v.date ?? ""
+).slice(0, 10);
+
+const end = String(
+v.end_date ?? v.checkOut ?? v.date ?? ""
+).slice(0, 10);
+
+return start <= today && end >= today;
+});
+
+const arrivingToday = todaysVisits.filter((v: any) => {
+const start = String(
+v.start_date ?? v.checkIn ?? v.date ?? ""
+).slice(0, 10);
+
+return start === today;
+});
+
+const leavingToday = todaysVisits.filter((v: any) => {
+const end = String(
+v.end_date ?? v.checkOut ?? v.date ?? ""
+).slice(0, 10);
+
+return end === today;
+});
+
+const currentlyHere = todaysVisits.filter((v: any) => {
+const start = String(
+v.start_date ?? v.checkIn ?? v.date ?? ""
+).slice(0, 10);
+
+const end = String(
+v.end_date ?? v.checkOut ?? v.date ?? ""
+).slice(0, 10);
+
+return start < today && end > today;
+});
+
+const dogName = (v: any) => {
+const dog = dogs.find(
+(d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
+);
+
 return (
-<div className="min-h-screen bg-stone-100 flex items-center justify-center px-4">
-<div className="bg-white rounded-xl shadow p-6 max-w-sm w-full text-center">
-<h1 className="text-2xl font-semibold text-stone-900">
-Tumbaros Staff
+v.dog_name ??
+v.dogName ??
+dog?.name ??
+dog?.dog_name ??
+dog?.data?.name ??
+"Unknown Pup"
+);
+};
+
+const formatTime = (time: any) => {
+if (!time) return "";
+
+const value = String(time).slice(0, 5);
+const [hour, minute] = value.split(":");
+const h = Number(hour);
+
+if (Number.isNaN(h)) return value;
+
+return `${h % 12 || 12}:${minute} ${h >= 12 ? "PM" : "AM"}`;
+};
+
+const todayLabel = new Date(
+today + "T12:00:00"
+).toLocaleDateString("en-US", {
+weekday: "long",
+month: "long",
+day: "numeric",
+});
+
+const PupRow = ({
+visit,
+leaving = false,
+}: {
+visit: any;
+leaving?: boolean;
+}) => (
+<div className="flex items-center justify-between py-3 border-b border-stone-100 last:border-0">
+<div>
+<div className="font-medium text-stone-900">
+{dogName(visit)}
+</div>
+
+<div className="text-xs text-stone-500 capitalize mt-0.5">
+{visit.service_type ?? visit.service ?? "Stay"}
+{(leaving
+? visit.pickup_time ?? visit.pickupTime
+: visit.dropoff_time ?? visit.dropoffTime) && (
+<>
+{" • "}
+{formatTime(
+leaving
+? visit.pickup_time ?? visit.pickupTime
+: visit.dropoff_time ?? visit.dropoffTime
+)}
+</>
+)}
+</div>
+</div>
+
+{leaving && (
+<div className="text-right">
+<div className="font-semibold text-emerald-800">
+$
+{Number(
+visit.price ?? visit.amount ?? 0
+).toLocaleString()}
+</div>
+<div className="text-[10px] uppercase tracking-wide text-stone-400">
+Due
+</div>
+</div>
+)}
+</div>
+);
+
+return (
+<div className="min-h-screen bg-stone-100 pb-24">
+<div className="max-w-xl mx-auto">
+<div className="bg-emerald-900 text-white px-5 pt-7 pb-6">
+<div className="flex items-start justify-between">
+<div>
+<div className="text-xs uppercase tracking-widest text-emerald-200">
+Tumbaros Clubhouse
+</div>
+
+<h1 className="text-2xl font-semibold mt-1">
+Today
 </h1>
 
-<p className="text-stone-500 mt-2">
-Welcome{displayName ? `, ${displayName}` : ""}.
+<p className="text-emerald-100 text-sm mt-1">
+{todayLabel}
 </p>
-
-<div className="mt-6 space-y-4">
-<div className="bg-stone-50 border border-stone-200 rounded-xl p-4 text-left">
-<h2 className="text-lg font-semibold text-stone-800">
-Staff Dashboard
-</h2>
-<p className="text-sm text-stone-500 mt-1">
-Your Clubhouse tools and daily information.
-</p>
-</div>
-
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<div className="border border-stone-200 rounded-xl p-4 text-left">
-<p className="text-sm text-stone-500">Today</p>
-<p className="text-lg font-semibold text-stone-800 mt-1">
-Daily Schedule
-</p>
-</div>
-
-<div className="border border-stone-200 rounded-xl p-4 text-left">
-<p className="text-sm text-stone-500">Dogs</p>
-<p className="text-lg font-semibold text-stone-800 mt-1">
-Pup Information
-</p>
-</div>
-</div>
 </div>
 
 <button
 onClick={() => supabase.auth.signOut()}
-className="mt-6 bg-stone-800 text-white px-4 py-2 rounded-lg"
+className="text-xs bg-white/10 px-3 py-2 rounded-lg"
 >
 Sign Out
 </button>
+</div>
+
+{displayName && (
+<p className="text-sm text-emerald-100 mt-5">
+Welcome, {displayName}
+</p>
+)}
+</div>
+
+<div className="p-4 space-y-4">
+<div className="grid grid-cols-3 gap-2">
+<div className="bg-white rounded-xl p-3 text-center border border-stone-200">
+<div className="text-2xl font-semibold text-stone-900">
+{todaysVisits.length}
+</div>
+<div className="text-[11px] text-stone-500 mt-1">
+Today
+</div>
+</div>
+
+<div className="bg-white rounded-xl p-3 text-center border border-stone-200">
+<div className="text-2xl font-semibold text-emerald-700">
+{arrivingToday.length}
+</div>
+<div className="text-[11px] text-stone-500 mt-1">
+Arriving
+</div>
+</div>
+
+<div className="bg-white rounded-xl p-3 text-center border border-stone-200">
+<div className="text-2xl font-semibold text-stone-900">
+{leavingToday.length}
+</div>
+<div className="text-[11px] text-stone-500 mt-1">
+Leaving
+</div>
+</div>
+</div>
+
+<div className="bg-white rounded-xl border border-stone-200 px-4">
+<h2 className="font-semibold text-stone-900 pt-4 pb-2">
+Currently Here
+</h2>
+
+{currentlyHere.length ? (
+currentlyHere.map((v: any) => (
+<PupRow key={v.id} visit={v} />
+))
+) : (
+<p className="text-sm text-stone-400 py-4">
+No pups currently staying.
+</p>
+)}
+</div>
+
+<div className="bg-white rounded-xl border border-stone-200 px-4">
+<h2 className="font-semibold text-stone-900 pt-4 pb-2">
+Arriving Today
+</h2>
+
+{arrivingToday.length ? (
+arrivingToday.map((v: any) => (
+<PupRow key={v.id} visit={v} />
+))
+) : (
+<p className="text-sm text-stone-400 py-4">
+No arrivals today.
+</p>
+)}
+</div>
+
+<div className="bg-white rounded-xl border border-stone-200 px-4">
+<h2 className="font-semibold text-stone-900 pt-4 pb-2">
+Leaving Today
+</h2>
+
+{leavingToday.length ? (
+leavingToday.map((v: any) => (
+<PupRow key={v.id} visit={v} leaving />
+))
+) : (
+<p className="text-sm text-stone-400 py-4">
+No pickups today.
+</p>
+)}
+</div>
+</div>
+
+<div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200">
+<div className="max-w-xl mx-auto grid grid-cols-3">
+<button className="py-4 text-emerald-800 font-semibold text-sm">
+Today
+</button>
+
+<button className="py-4 text-stone-500 text-sm">
+Schedule
+</button>
+
+<button className="py-4 text-stone-500 text-sm">
+Members
+</button>
+</div>
+</div>
 </div>
 </div>
 );
