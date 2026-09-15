@@ -1748,6 +1748,7 @@ Due
 </div>
 )}
 </div>
+</div>
 );
 const employeePage = employeeView;
 if (employeePage === "members") {
