@@ -1556,9 +1556,32 @@ Tumbaros Staff
 Welcome{displayName ? `, ${displayName}` : ""}.
 </p>
 
-<p className="text-sm text-stone-600 mt-5">
-Employee dashboard is being set up.
+<div className="mt-6 space-y-4">
+<div className="bg-stone-50 border border-stone-200 rounded-xl p-4 text-left">
+<h2 className="text-lg font-semibold text-stone-800">
+Staff Dashboard
+</h2>
+<p className="text-sm text-stone-500 mt-1">
+Your Clubhouse tools and daily information.
 </p>
+</div>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div className="border border-stone-200 rounded-xl p-4 text-left">
+<p className="text-sm text-stone-500">Today</p>
+<p className="text-lg font-semibold text-stone-800 mt-1">
+Daily Schedule
+</p>
+</div>
+
+<div className="border border-stone-200 rounded-xl p-4 text-left">
+<p className="text-sm text-stone-500">Dogs</p>
+<p className="text-lg font-semibold text-stone-800 mt-1">
+Pup Information
+</p>
+</div>
+</div>
+</div>
 
 <button
 onClick={() => supabase.auth.signOut()}
