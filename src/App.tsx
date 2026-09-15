@@ -1624,7 +1624,35 @@ isBoardingVisit(v) &&
 getStart(v) < today &&
 getEnd(v) > today
 );
+const dogForVisit = (v: any) => {
+const dogId = v.dog_id ?? v.dogId;
 
+return (
+dogs.find(
+(d: any) => dogId && String(d.id) === String(dogId)
+) ??
+dogs.find(
+(d: any) =>
+String(d.dog_name ?? d.name ?? d.data?.name ?? "")
+.trim()
+.toLowerCase() ===
+String(v.dog_name ?? v.dogName ?? "")
+.trim()
+.toLowerCase()
+) ??
+null
+);
+};
+
+const dogPhoto = (v: any) => {
+const dog = dogForVisit(v);
+
+return (
+dog?.photo ??
+dog?.data?.photo ??
+null
+);
+};
 const dogName = (v: any) => {
 const dog = dogs.find(
 (d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
@@ -1668,6 +1696,19 @@ visit: any;
 leaving?: boolean;
 }) => (
 <div className="flex items-center justify-between py-3 border-b border-stone-100 last:border-0">
+<div className="flex items-center gap-3">
+{dogPhoto(visit) ? (
+<img
+src={dogPhoto(visit)}
+alt={dogName(visit)}
+className="w-11 h-11 rounded-full object-cover flex-shrink-0 border border-stone-200"
+/>
+) : (
+<div className="w-11 h-11 rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0 border border-stone-200">
+<PawPrint className="w-5 h-5 text-stone-300" />
+</div>
+)}
+
 <div>
 <div className="font-medium text-stone-900">
 {dogName(visit)}
