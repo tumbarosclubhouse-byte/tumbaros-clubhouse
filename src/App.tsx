@@ -1782,6 +1782,15 @@ className="w-full h-full object-contain p-1"
               </h1>
               <p className="text-stone-400 text-sm">Business Console</p>
             </div>
+            <button
+onClick={async () => {
+await supabase.auth.signOut();
+window.location.reload();
+}}
+className="ml-auto bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm"
+>
+Sign Out
+</button>
           </div>
         </div>
       </header>
