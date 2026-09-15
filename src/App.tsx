@@ -1545,47 +1545,79 @@ Sign Out
 }
 
 if (!isPublic && userRole === "employee") {
-const today = new Date().toISOString().slice(0, 10);
+// Use the employee's LOCAL calendar date, not UTC
+const now = new Date();
+const today = `${now.getFullYear()}-${String(
+now.getMonth() + 1
+).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
+const getStart = (v: any) =>
+String(
+v.start_date ??
+v.startDate ??
+v.checkIn ??
+v.date ??
+""
+).slice(0, 10);
+
+const getEnd = (v: any) =>
+String(
+v.end_date ??
+v.endDate ??
+v.checkOut ??
+""
+).slice(0, 10);
+
+const getService = (v: any) =>
+String(
+v.service_type ??
+v.serviceType ??
+v.service ??
+""
+)
+.trim()
+.toLowerCase();
+
+const isBoardingVisit = (v: any) =>
+getService(v).includes("board");
+
+// ALL pups that belong on today's schedule.
+// Daycare only needs its start date.
+// Boarding uses the full start → end range.
 const todaysVisits = visits.filter((v: any) => {
-const start = String(
-v.start_date ?? v.checkIn ?? v.date ?? ""
-).slice(0, 10);
+const start = getStart(v);
+const end = getEnd(v);
 
-const end = String(
-v.end_date ?? v.checkOut ?? v.date ?? ""
-).slice(0, 10);
+if (!start) return false;
 
+if (isBoardingVisit(v)) {
 return start <= today && end >= today;
-});
-
-const arrivingToday = todaysVisits.filter((v: any) => {
-const start = String(
-v.start_date ?? v.checkIn ?? v.date ?? ""
-).slice(0, 10);
+}
 
 return start === today;
 });
 
-const leavingToday = todaysVisits.filter((v: any) => {
-const end = String(
-v.end_date ?? v.checkOut ?? v.date ?? ""
-).slice(0, 10);
+// EVERY dog whose booking begins today:
+// boarding + daycare + meet & greet
+const arrivingToday = todaysVisits.filter(
+(v: any) => getStart(v) === today
+);
 
-return end === today;
-});
+// Boarding pickups ending today
+const leavingToday = todaysVisits.filter(
+(v: any) =>
+isBoardingVisit(v) &&
+getEnd(v) === today
+);
 
-const currentlyHere = todaysVisits.filter((v: any) => {
-const start = String(
-v.start_date ?? v.checkIn ?? v.date ?? ""
-).slice(0, 10);
-
-const end = String(
-v.end_date ?? v.checkOut ?? v.date ?? ""
-).slice(0, 10);
-
-return start < today && end > today;
-});
+// Boarding dogs who were already here before today
+// and are not leaving until after today
+const currentlyHere = todaysVisits.filter(
+(v: any) =>
+isBoardingVisit(v) &&
+getStart(v) < today &&
+getEnd(v) > today
+);
 
 const dogName = (v: any) => {
 const dog = dogs.find(
