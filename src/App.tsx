@@ -398,6 +398,9 @@ async function findDogByPhone(phoneRaw: string, dogName: string) {
 }
 export default function TumbarosManagement() {
   const [view, setView] = useState("dashboard");
+  const [employeeView, setEmployeeView] = useState<
+"today" | "schedule" | "members"
+>("today");
   const [dogs, setDogs] = useState([]);
   const [visits, setVisits] = useState([]);
   const historicalMonthly: Record<string, number> = {
