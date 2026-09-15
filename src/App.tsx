@@ -1285,7 +1285,7 @@ subscription.unsubscribe();
     if (isPublic) return;
 if (authLoading) return;
 if (!currentUser) return;
-if (userRole !== "owner") return;
+if (userRole !== "owner" && userRole !== "employee") return;
     (async () => {
       setLoading(true);
       // ✅ Step 2: hydrate UI from local cache FIRST (so dashboard isn't blank if Supabase is down)
