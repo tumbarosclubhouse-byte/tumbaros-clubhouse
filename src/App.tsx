@@ -1730,21 +1730,21 @@ setSelectedVisit={setSelectedVisit}
 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50">
 <div className="max-w-xl mx-auto grid grid-cols-3">
 <button
-onClick={() => setEmployeePage("today")}
+onClick={() => setEmployeeView("today")}
 className="py-4 text-stone-500 text-sm"
 >
 Today
 </button>
 
 <button
-onClick={() => setEmployeePage("schedule")}
+onClick={() => setEmployeeView("schedule")}
 className="py-4 text-emerald-800 font-semibold text-sm"
 >
 Schedule
 </button>
 
 <button
-onClick={() => setEmployeePage("members")}
+onClick={() => setEmployeeView("members")}
 className="py-4 text-stone-500 text-sm"
 >
 Members
