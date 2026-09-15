@@ -3634,7 +3634,7 @@ function VisitForm({ dogs, onSave, onCancel, initialData, mode }) {
                     d.owner_name ?? d.data?.owner ?? ""
                   })`,
                 }))
-                .find((option: any) => option.value === data.dogId) || null
+.find((option: any) => String(option.value) === String(data.dogId)) || null
             }
             onChange={(selected: any) =>
               setData({ ...data, dogId: selected?.value || "" })
