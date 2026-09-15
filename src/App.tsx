@@ -1705,7 +1705,12 @@ Due
 )}
 </div>
 );
-
+const employeePage =
+employeeView === "schedule"
+? "schedule"
+: employeeView === "members"
+? "members"
+: "today";
 return (
 <div className="min-h-screen bg-stone-100 pb-24">
 <div className="max-w-xl mx-auto">
@@ -1821,15 +1826,36 @@ No pickups today.
 
 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200">
 <div className="max-w-xl mx-auto grid grid-cols-3">
-<button className="py-4 text-emerald-800 font-semibold text-sm">
+<button
+onClick={() => setEmployeeView("today")}
+className={`py-4 text-sm ${
+employeeView === "today"
+? "text-emerald-800 font-semibold"
+: "text-stone-500"
+}`}
+>
 Today
 </button>
 
-<button className="py-4 text-stone-500 text-sm">
+<button
+onClick={() => setEmployeeView("schedule")}
+className={`py-4 text-sm ${
+employeeView === "schedule"
+? "text-emerald-800 font-semibold"
+: "text-stone-500"
+}`}
+>
 Schedule
 </button>
 
-<button className="py-4 text-stone-500 text-sm">
+<button
+onClick={() => setEmployeeView("members")}
+className={`py-4 text-sm ${
+employeeView === "members"
+? "text-emerald-800 font-semibold"
+: "text-stone-500"
+}`}
+>
 Members
 </button>
 </div>
