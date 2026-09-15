@@ -1705,12 +1705,8 @@ Due
 )}
 </div>
 );
-const employeePage =
-employeeView === "schedule"
-? "schedule"
-: employeeView === "members"
-? "members"
-: "today";
+const employeePage = employeeView;
+
   if (employeePage === "schedule") {
 return (
 <div className="min-h-screen bg-stone-100 pb-24">
