@@ -1713,6 +1713,36 @@ employeeView === "schedule"
 : "today";
 return (
 <div className="min-h-screen bg-stone-100 pb-24">
+  {employeePage === "schedule" ? (
+<div className="max-w-xl mx-auto p-4 pb-24">
+<div className="mb-4">
+<h1 className="text-2xl font-semibold text-stone-900">
+Schedule
+</h1>
+<p className="text-sm text-stone-500 mt-1">
+All upcoming and current stays
+</p>
+</div>
+
+<Visits
+visits={visits}
+setVisits={setVisits}
+dogs={dogs}
+selectedVisit={selectedVisit}
+setSelectedVisit={setSelectedVisit}
+/>
+</div>
+) : employeePage === "members" ? (
+<div className="max-w-xl mx-auto p-4 pb-24">
+<h1 className="text-2xl font-semibold text-stone-900">
+Members
+</h1>
+<p className="text-sm text-stone-500 mt-1">
+Clubhouse pup profiles
+</p>
+</div>
+) : (
+<>
 <div className="max-w-xl mx-auto">
 <div className="bg-emerald-900 text-white px-5 pt-7 pb-6">
 <div className="flex items-start justify-between">
@@ -1823,7 +1853,8 @@ No pickups today.
 )}
 </div>
 </div>
-
+</>
+)}
 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200">
 <div className="max-w-xl mx-auto grid grid-cols-3">
 <button
