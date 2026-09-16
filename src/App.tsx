@@ -1610,9 +1610,27 @@ return start === today;
 
 // EVERY dog whose booking begins today:
 // boarding + daycare + meet & greet
-const arrivingToday = todaysVisits.filter(
-(v: any) => getStart(v) === today
+const timeToMinutes = (time: any) => {
+if (!time) return Number.POSITIVE_INFINITY;
+
+const value = String(time).trim().slice(0, 5);
+const [hour, minute] = value.split(":").map(Number);
+
+if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+return Number.POSITIVE_INFINITY;
+}
+
+return hour * 60 + minute;
+};
+
+const arrivingToday = todaysVisits
+.filter((v: any) => getStart(v) === today)
+.sort((a: any, b: any) => {
+return (
+timeToMinutes(a.dropoff_time ?? a.dropoffTime) -
+timeToMinutes(b.dropoff_time ?? b.dropoffTime)
 );
+});
 
 // Boarding pickups + daycare dogs leaving today
 const leavingToday = todaysVisits.filter((v: any) => {
@@ -3158,6 +3176,18 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
   const [isEditingVisit, setIsEditingVisit] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editVisitDraft, setEditVisitDraft] = useState<any>(null);
+  const todayRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+const timer = setTimeout(() => {
+todayRef.current?.scrollIntoView({
+behavior: "auto",
+block: "start",
+});
+}, 150);
+
+return () => clearTimeout(timer);
+}, []);
 
   const fmtTime = (t: any) => {
     if (!t) return "";
@@ -3410,13 +3440,20 @@ console.log("EDIT DEBUG selectedVisit:", selectedVisit);
     );
 
   return (
-    <div className="space-y-6">
-      <button
-        onClick={() => setAdd(true)}
-        className="px-4 py-2 bg-emerald-600 text-white rounded-lg"
-      >
-        + Log Visit
-      </button>
+<div className="space-y-6">
+<div className="sticky top-0 z-30 bg-stone-50 py-2">
+<button
+onClick={() => {
+setIsEditingVisit(false);
+setEditVisitDraft(null);
+setSelectedVisit(null);
+setAdd(true);
+}}
+className="px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-sm"
+>
++ Log Visit
+</button>
+</div>
       <div className="flex items-center justify-between">
         <button onClick={prevMonth} className="px-3 py-1 bg-stone-200 rounded">
           ←
@@ -3532,10 +3569,18 @@ return dateString >= rowCheckIn && dateString <= rowCheckOut;
           });
 
           return (
-            <div
-              key={dayNumber}
-              className="border rounded-lg p-3 bg-white shadow-sm"
-            >
+           <div
+key={dayNumber}
+ref={
+dateString ===
+`${new Date().getFullYear()}-${String(
+new Date().getMonth() + 1
+).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`
+? todayRef
+: null
+}
+className="border rounded-lg p-3 bg-white shadow-sm scroll-mt-24"
+>
               <div className="font-semibold mb-2">
                 {new Date(dateString + "T12:00:00").toLocaleDateString(
                   "en-US",
