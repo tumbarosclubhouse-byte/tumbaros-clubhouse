@@ -1591,6 +1591,14 @@ const todaysVisits = visits.filter((v: any) => {
 const start = getStart(v);
 const end = getEnd(v);
 
+// Employee Today page is ALTON ONLY.
+// Older visits with no location are treated as Alton.
+const location = String(v.location ?? "Alton")
+.trim()
+.toLowerCase();
+
+if (location !== "alton") return false;
+
 if (!start) return false;
 
 if (isBoardingVisit(v)) {
