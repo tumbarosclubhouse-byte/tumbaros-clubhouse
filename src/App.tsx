@@ -3343,6 +3343,7 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
             phone: dog?.phone ?? null,
             service: data.serviceType === "daycare" ? "daycare" : "boarding",
             service_type: data.serviceType,
+            location: data.location || "Alton",
             start_date: data.checkIn
               ? String(data.checkIn).slice(0, 10)
               : data.date
@@ -3352,8 +3353,11 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
             dropoff_time: data.dropoffTime || null,
             pickup_time: data.pickupTime || null,
             amount: Number(data.price || 0),
-            price: Number(data.price || 0),
-            notes: data.notes || null,
+price: Number(data.price || 0),
+transport: Boolean(data.transport),
+bath: Boolean(data.bath),
+nails: Boolean(data.nails),
+notes: data.notes || null,
           };
 
           const editingId = editVisitDraft?.id ?? selectedVisit?.id ?? null;
@@ -3442,9 +3446,13 @@ console.log("EDIT DEBUG selectedVisit:", selectedVisit);
               10
             );
 
-            if (rowType === "boarding" && rowCheckIn && rowCheckOut) {
-              return dateString >= rowCheckIn && dateString <= rowCheckOut;
-            }
+          if (
+(rowType === "boarding" || rowType === "daycare") &&
+rowCheckIn &&
+rowCheckOut
+) {
+return dateString >= rowCheckIn && dateString <= rowCheckOut;
+}
 
             return (
               String(v.start_date ?? v.date ?? "").slice(0, 10) === dateString
@@ -4151,33 +4159,102 @@ className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm 
               />
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-stone-600 mb-1">
-                Date *
-              </label>
-              <input
-                type="date"
-                required
-                value={data.date}
-                onChange={(e) => setData({ ...data, date: e.target.value })}
-                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-stone-600 mb-1">Time</label>
-              <input
-                type="time"
-                value={data.dropoffTime}
-                onChange={(e) =>
-                  setData({ ...data, dropoffTime: e.target.value })
-                }
-                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
-              />
-            </div>
-          </div>
-        )}
+       ) : data.serviceType === "daycare" ? (
+<div className="grid grid-cols-2 gap-4">
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+Start Date *
+</label>
+<input
+type="date"
+required
+value={data.checkIn || data.date}
+onChange={(e) =>
+setData({
+...data,
+checkIn: e.target.value,
+date: e.target.value,
+checkOut: data.checkOut || e.target.value,
+})
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+End Date *
+</label>
+<input
+type="date"
+required
+min={data.checkIn || data.date}
+value={data.checkOut || data.checkIn || data.date}
+onChange={(e) =>
+setData({ ...data, checkOut: e.target.value })
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+Drop-off Time
+</label>
+<input
+type="time"
+value={data.dropoffTime}
+onChange={(e) =>
+setData({ ...data, dropoffTime: e.target.value })
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+Pick-up Time
+</label>
+<input
+type="time"
+value={data.pickupTime}
+onChange={(e) =>
+setData({ ...data, pickupTime: e.target.value })
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+</div>
+) : (
+<div className="grid grid-cols-2 gap-4">
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+Date *
+</label>
+<input
+type="date"
+required
+value={data.date}
+onChange={(e) => setData({ ...data, date: e.target.value })}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+
+<div>
+<label className="block text-xs text-stone-600 mb-1">
+Time
+</label>
+<input
+type="time"
+value={data.dropoffTime}
+onChange={(e) =>
+setData({ ...data, dropoffTime: e.target.value })
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+/>
+</div>
+</div>
+)}
 
         <div>
           <label className="block text-xs text-stone-600 mb-1">
