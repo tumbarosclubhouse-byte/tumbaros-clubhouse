@@ -3635,10 +3635,23 @@ return dateString >= rowCheckIn && dateString <= rowCheckOut;
                     }}
                     className={`text-sm px-2 py-1 rounded mb-1 ${badgeColor}`}
                   >
-                    {displayName} - {badgeLetter}
-                    {timeText && (
-                      <div className="text-xs opacity-70">{timeText}</div>
-                    )}
+                  <div className="flex items-start justify-between gap-3">
+<div>
+<div>
+{displayName} - {badgeLetter}
+</div>
+
+{timeText && (
+<div className="text-xs opacity-70">
+{timeText}
+</div>
+)}
+</div>
+
+<div className="text-xs font-semibold whitespace-nowrap opacity-80">
+{v.location || "Alton"}
+</div>
+</div>
                   </div>
                 );
               })}
