@@ -1396,7 +1396,7 @@ while (true) {
 const { data, error } = await supabase
 .from("visits")
 .select(
-"id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price, notes, transport, bath, nails, location"
+"id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price, notes, location"
 )
 .order("start_date", { ascending: false })
 .range(from, from + PAGE_SIZE - 1);
@@ -3354,9 +3354,6 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
             pickup_time: data.pickupTime || null,
             amount: Number(data.price || 0),
 price: Number(data.price || 0),
-transport: Boolean(data.transport),
-bath: Boolean(data.bath),
-nails: Boolean(data.nails),
 notes: data.notes || null,
           };
 
