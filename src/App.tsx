@@ -3357,7 +3357,9 @@ function Visits({ visits, setVisits, dogs, selectedVisit, setSelectedVisit }) {
           };
 
           const editingId = editVisitDraft?.id ?? selectedVisit?.id ?? null;
-
+console.log("EDIT DEBUG editingId:", editingId);
+console.log("EDIT DEBUG editVisitDraft:", editVisitDraft);
+console.log("EDIT DEBUG selectedVisit:", selectedVisit);
           if (isEditingVisit && editingId) {
             const { data: updated, error } = await supabase
               .from("visits")
