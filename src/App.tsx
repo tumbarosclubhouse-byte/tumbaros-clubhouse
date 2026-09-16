@@ -1396,7 +1396,7 @@ while (true) {
 const { data, error } = await supabase
 .from("visits")
 .select(
-"id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price"
+"id, dog_id, dog_name, start_date, end_date, created_at, service_type, amount, dropoff_time, pickup_time, price, notes, transport, bath, nails, location"
 )
 .order("start_date", { ascending: false })
 .range(from, from + PAGE_SIZE - 1);
@@ -3939,6 +3939,7 @@ function VisitForm({ dogs, onSave, onCancel, initialData, mode }) {
     const empty = {
       dogId: "",
       serviceType: "boarding",
+      location: "Alton",
       checkIn: "",
       checkOut: "",
       date: today,
@@ -3992,6 +3993,7 @@ function VisitForm({ dogs, onSave, onCancel, initialData, mode }) {
       ...empty,
       dogId: initialData.dog_id ? String(initialData.dog_id) : "",
       serviceType,
+      location: initialData.location ?? "Alton",
       checkIn,
       checkOut,
       date: checkIn || today,
@@ -4079,6 +4081,22 @@ function VisitForm({ dogs, onSave, onCancel, initialData, mode }) {
             <option value="meet-greet">Meet & Greet</option>
           </select>
         </div>
+        <div>
+<label className="block text-xs text-stone-600 mb-1">
+Location *
+</label>
+<select
+required
+value={data.location}
+onChange={(e) =>
+setData({ ...data, location: e.target.value })
+}
+className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded text-sm focus:outline-none focus:border-emerald-600"
+>
+<option value="Alton">Alton</option>
+<option value="Sumter">Sumter</option>
+</select>
+</div>
 
         {data.serviceType === "boarding" ? (
           <div className="grid grid-cols-2 gap-4">
