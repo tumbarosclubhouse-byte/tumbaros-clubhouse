@@ -1309,7 +1309,6 @@ if (userRole !== "owner" && userRole !== "employee") return;
             .order("id", { ascending: false }),
           180000
         );
-        console.log("DOGS FROM DB.", data);
 
         if (error) {
           console.error(error);
@@ -1365,7 +1364,6 @@ if (userRole !== "owner" && userRole !== "employee") return;
         if (dogErr) {
           console.error("DOGS LOAD ERROR:", dogErr);
         } else {
-          console.log("Loaded dogs:", dogRows);
           const liteDogs = (dogRows || []).map((d: any) => ({
             ...d,
             // keep the full data (INCLUDING photo) so profiles can display it
@@ -2585,60 +2583,6 @@ function Dashboard({ dogs, visits }) {
     </div>
   )}
 </div>
-      <div className="bg-white border border-stone-200 rounded-lg p-6">
-        <h3 className="font-light text-lg mb-4">Recent Activity</h3>
-        <div className="space-y-2">
-          {visits
-            .slice(-8)
-            .reverse()
-            .map((v, i) => {
-              const dogName =
-                v.dog_name ||
-                v.dogName ||
-                dogs.find(
-                  (d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
-                )?.dog_name ||
-                dogs.find(
-                  (d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
-                )?.name ||
-                dogs.find(
-                  (d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
-                )?.data?.dog_name ||
-                dogs.find(
-                  (d: any) => String(d.id) === String(v.dog_id ?? v.dogId)
-                )?.data?.name ||
-                (v.dog_id ?? v.dogId
-                  ? `Unknown (dog_id: ${v.dog_id ?? v.dogId})`
-                  : "Unknown");
-              return (
-                <div
-                  key={i}
-                  className="flex justify-between py-3 border-b border-stone-100 last:border-0"
-                >
-                  <div className="flex items-center space-x-3 min-w-0 flex-1">
-                    <div className="w-10 h-10 bg-stone-200 rounded-full flex items-center justify-center text-stone-600 font-medium flex-shrink-0">
-                      {dogName?.[0] || "?"}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">{dogName}</p>
-                      <p className="text-xs text-stone-500">
-                        {v.serviceType} • {v.checkIn || v.date}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-medium text-emerald-700 flex-shrink-0">
-                    ${v.price?.toFixed(0)}
-                  </span>
-                </div>
-              );
-            })}
-          {visits.length === 0 && (
-            <p className="text-center text-stone-400 py-8 text-sm">
-              No visits yet
-            </p>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -3741,150 +3685,7 @@ className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-black/1
           );
         })}
       </div>
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-light">Visit Log</h2>
-        <button
-          onClick={() => setAdd(true)}
-          className="px-4 py-2 bg-emerald-800 text-white rounded-lg text-sm flex items-center space-x-2 flex-shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Log Visit</span>
-        </button>
-      </div>
 
-      <div className="flex space-x-2 overflow-x-auto pb-2">
-        {[
-          { l: "All", v: "all" },
-          { l: "Boarding", v: "boarding" },
-          { l: "Daycare", v: "daycare" },
-          { l: "Meet & Greet", v: "meet-greet" },
-        ].map((f) => (
-          <button
-            key={f.v}
-            onClick={() => setFilter(f.v)}
-            className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap flex-shrink-0 ${
-              filter === f.v
-                ? "bg-emerald-800 text-white"
-                : "bg-stone-200 text-stone-600"
-            }`}
-          >
-            {f.l}
-          </button>
-        ))}
-      </div>
-
-      <div className="bg-white border border-stone-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-stone-100 border-b border-stone-200">
-              <tr>
-                {["Date", "Member", "Service", "Add-ons", "Price", ""].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 text-left text-xs font-medium text-stone-600 whitespace-nowrap"
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-stone-100">
-              {filtered
-                .slice()
-                .reverse()
-                .map((v) => {
-                  const dogId = v.dog_id ?? v.dogId;
-
-                  const matchedDog = dogs.find(
-                    (d: any) => String(d.id) === String(dogId)
-                  );
-
-                  const displayName =
-                    v.dog_name ||
-                    v.dogName ||
-                    matchedDog?.dog_name ||
-                    matchedDog?.name ||
-                    matchedDog?.data?.dog_name ||
-                    matchedDog?.data?.name ||
-                    (dogId ? `Unknown (dog_id: ${dogId})` : "Unknown");
-                  const addons = [];
-                  if (v.transport) addons.push("Transport $65");
-                  if (v.bath) addons.push("Bath $40");
-                  if (v.nails) addons.push("Nails $15");
-            
-                  return (
-                    <tr key={v.id} className="hover:bg-stone-50">
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        {v.checkIn ? `${v.checkIn} to ${v.checkOut}` : v.date}
-                      </td>
-                    <td className="px-4 py-3 text-sm font-medium">
-<div className="flex items-center gap-2">
-{(matchedDog?.photo || matchedDog?.data?.photo) ? (
-<img
-src={matchedDog?.photo || matchedDog?.data?.photo}
-alt={displayName}
-className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-stone-200"
-/>
-) : (
-<div className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0 border border-stone-200">
-<PawPrint className="w-4 h-4 text-stone-300" />
-</div>
-)}
-
-<span>{displayName}</span>
-</div>
-</td>
-                      <td className="px-4 py-3 text-sm capitalize whitespace-nowrap">
-                        {v.serviceType}
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <div className="flex flex-wrap gap-1">
-                          {addons.map((a, i) => (
-                            <span
-                              key={i}
-                              className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded whitespace-nowrap"
-                            >
-                              {a}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium text-emerald-700 whitespace-nowrap">
-                        ${v.price?.toFixed(0)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={async () => {
-                            if (!confirm("Delete?")) return;
-
-                            const { error } = await supabase
-                              .from("visits")
-                              .delete()
-                              .eq("id", v.id);
-
-                            if (error) {
-                              console.error("Visit delete error:", error);
-                              alert("Delete failed — check console.");
-                              return;
-                            }
-
-                            setVisits((prev) =>
-                              prev.filter((x) => x.id !== v.id)
-                            );
-                          }}
-                          className="text-xs text-red-600 whitespace-nowrap"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
         {selectedVisit && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl p-6 w-96 shadow-xl">
