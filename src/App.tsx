@@ -3795,9 +3795,9 @@ className="border rounded-lg p-3 bg-white shadow-sm scroll-mt-24"
                       </td>
                     <td className="px-4 py-3 text-sm font-medium">
 <div className="flex items-center gap-2">
-{dogPhoto(v) ? (
+{(matchedDog?.photo || matchedDog?.data?.photo) ? (
 <img
-src={dogPhoto(v)}
+src={matchedDog?.photo || matchedDog?.data?.photo}
 alt={displayName}
 className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-stone-200"
 />
