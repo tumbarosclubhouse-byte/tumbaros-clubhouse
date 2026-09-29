@@ -3793,9 +3793,23 @@ className="border rounded-lg p-3 bg-white shadow-sm scroll-mt-24"
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
                         {v.checkIn ? `${v.checkIn} to ${v.checkOut}` : v.date}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {displayName}
-                      </td>
+                    <td className="px-4 py-3 text-sm font-medium">
+<div className="flex items-center gap-2">
+{dogPhoto(v) ? (
+<img
+src={dogPhoto(v)}
+alt={displayName}
+className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-stone-200"
+/>
+) : (
+<div className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0 border border-stone-200">
+<PawPrint className="w-4 h-4 text-stone-300" />
+</div>
+)}
+
+<span>{displayName}</span>
+</div>
+</td>
                       <td className="px-4 py-3 text-sm capitalize whitespace-nowrap">
                         {v.serviceType}
                       </td>
