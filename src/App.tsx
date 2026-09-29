@@ -3799,6 +3799,12 @@ null;
                   if (v.transport) addons.push("Transport $65");
                   if (v.bath) addons.push("Bath $40");
                   if (v.nails) addons.push("Nails $15");
+                  console.log("MAIN SCHEDULE PHOTO DEBUG:", {
+visitDog: v.dog_name,
+visitDogId: dogId,
+matchedDog,
+photo: matchedDog?.photo ?? matchedDog?.data?.photo ?? null,
+});
                   return (
                     <tr key={v.id} className="hover:bg-stone-50">
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
