@@ -3700,6 +3700,19 @@ null;
                     className={`text-sm px-2 py-1 rounded mb-1 ${badgeColor}`}
                   >
                   <div className="flex items-start justify-between gap-3">
+<div className="flex items-start gap-2">
+{(matchedDog?.photo || matchedDog?.data?.photo) ? (
+<img
+src={matchedDog?.photo || matchedDog?.data?.photo}
+alt={displayName}
+className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-black/10"
+/>
+) : (
+<div className="w-9 h-9 rounded-full bg-white/40 flex items-center justify-center flex-shrink-0">
+<PawPrint className="w-4 h-4 opacity-50" />
+</div>
+)}
+
 <div>
 <div>
 {displayName} - {badgeLetter}
@@ -3710,6 +3723,7 @@ null;
 {timeText}
 </div>
 )}
+</div>
 </div>
 
 <div className="text-xs font-semibold whitespace-nowrap opacity-80">
