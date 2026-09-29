@@ -3839,7 +3839,6 @@ setSelectedVisit(null);
           </div>
         )}
       </div>
-    </div>
   );
 }
 
