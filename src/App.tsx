@@ -3664,9 +3664,20 @@ className="border rounded-lg p-3 bg-white shadow-sm scroll-mt-24"
                   v.data?.dog_id ??
                   v.data?.dogId;
 
-                const matchedDog = dogs.find(
-                  (d: any) => String(d.id) === String(dogId)
-                );
+              const matchedDog =
+dogs.find(
+(d: any) => dogId && String(d.id) === String(dogId)
+) ??
+dogs.find(
+(d: any) =>
+String(d.dog_name ?? d.name ?? d.data?.name ?? "")
+.trim()
+.toLowerCase() ===
+String(v.dog_name ?? v.dogName ?? "")
+.trim()
+.toLowerCase()
+) ??
+null;
 
                 const displayName =
                   v.dog_name ||
